@@ -1,27 +1,39 @@
 import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
 import { Context } from "../Context";
 function Image({ className, img }) {
   const [hovered, setHovered] = useState(false);
-  const { toggleFavorite } = useContext(Context);
+  const { toggleFavorite, addToCart, cartItems, removeFromCart } =
+    useContext(Context);
 
-  const filledHeart = (
-    <i
-      className="ri-heart-fill favorite"
-      onClick={() => toggleFavorite(img.id)}
-    ></i>
-  );
-  const emptyHeart = (
-    <i
-      className="ri-heart-line favorite"
-      onClick={() => toggleFavorite(img.id)}
-    ></i>
-  );
-  const cartIcon = hovered && <i className="ri-add-circle-line cart"></i>;
+  // .includes makes something wired! It works fine after adding the item the first time but if the component rerenders, it doesn't work! Why? Because it tests for the object itself, which we do replace in the list when we favorite an image (to make isFavorite: true instead of false).
+  // const alreadyInCart = cartItems.includes(img);
 
-  function heartIcon() {
-    if (img.isFavorite) return filledHeart;
-    else if (hovered) return emptyHeart;
-  }
+  const alreadyInCart = cartItems.find((item) => item.id === img.id);
+  const cartIcon =
+    (alreadyInCart && (
+      <i
+        className="ri-shopping-cart-fill cart"
+        onClick={() => removeFromCart(img.id)}
+      ></i>
+    )) ||
+    (hovered && (
+      <i className="ri-add-circle-line cart" onClick={() => addToCart(img)}></i>
+    ));
+
+  const heartIcon =
+    (img.isFavorite && (
+      <i
+        className="ri-heart-fill favorite"
+        onClick={() => toggleFavorite(img.id)}
+      ></i>
+    )) ||
+    (hovered && (
+      <i
+        className="ri-heart-line favorite"
+        onClick={() => toggleFavorite(img.id)}
+      ></i>
+    ));
 
   return (
     <div
@@ -30,10 +42,19 @@ function Image({ className, img }) {
       onMouseLeave={() => setHovered(false)}
     >
       <img src={img.url} className="image-grid" />
-      {heartIcon()}
+      {heartIcon}
       {cartIcon}
     </div>
   );
 }
+
+Image.propTypes = {
+  className: PropTypes.string,
+  img: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    isFavorite: PropTypes.bool,
+  }),
+};
 
 export default Image;
