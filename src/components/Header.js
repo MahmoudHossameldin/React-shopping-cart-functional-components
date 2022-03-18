@@ -10,7 +10,7 @@ function Header() {
   return (
     <header>
       <h2>
-        <Link to="/">Pic Some</Link>
+        <Link to="/">T-Shirtify</Link>
       </h2>
 
       <Link to="/cart">

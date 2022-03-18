@@ -8,7 +8,7 @@ function ContextProvider({ children }) {
 
   useEffect(() => {
     fetch(
-      "https://raw.githubusercontent.com/bobziroll/scrimba-react-bootcamp-images/master/images.json"
+      "https://raw.githubusercontent.com/MahmoudHossameldin/react-product-imgs/main/images.json"
     )
       .then((res) => res.json())
       .then((data) => setAllPhotos(data));
